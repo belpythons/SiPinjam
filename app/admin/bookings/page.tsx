@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
 import { Calendar, FileText, AlertCircle } from "lucide-react"
 import { toast } from "sonner"
 import { BookingTabs } from "@/components/admin/booking-tabs"
@@ -77,14 +78,19 @@ export default function AdminBookingsPage() {
   const pendingCount = bookings.filter((b) => b.status === "pending").length
 
   return (
-    <div className="container py-10 px-6 space-y-8">
-      <div className="space-y-1">
+    <div className="p-8 space-y-8">
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-1">
         <h1 className="text-3xl font-bold tracking-tight">Kelola Peminjaman</h1>
         <p className="text-muted-foreground">Kelola persetujuan dan pantau status peminjaman ruangan dan barang</p>
-      </div>
+      </motion.div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="grid gap-6 md:grid-cols-3"
+      >
+        <Card className="hover:shadow-lg hover:scale-105 transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
               <div className="rounded-lg bg-yellow-100 p-3 dark:bg-yellow-900">
@@ -98,7 +104,7 @@ export default function AdminBookingsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg hover:scale-105 transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
               <div className="rounded-lg bg-green-100 p-3 dark:bg-green-900">
@@ -114,7 +120,7 @@ export default function AdminBookingsPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover:shadow-lg hover:scale-105 transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
               <div className="rounded-lg bg-gray-100 p-3 dark:bg-gray-800">
@@ -127,17 +133,17 @@ export default function AdminBookingsPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
-      {/* Tabs */}
-      <BookingTabs
-        bookings={bookings}
-        onApprove={handleApprove}
-        onReject={handleReject}
-        onViewDetails={handleViewDetails}
-      />
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+        <BookingTabs
+          bookings={bookings}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onViewDetails={handleViewDetails}
+        />
+      </motion.div>
 
-      {/* Modals */}
       <BookingDetailModal open={detailModalOpen} onOpenChange={setDetailModalOpen} booking={selectedBooking} />
 
       <ApprovalModal

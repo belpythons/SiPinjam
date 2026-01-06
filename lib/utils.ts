@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { format, isValid } from "date-fns"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -91,4 +92,19 @@ export function deserializeDates(obj: any): any {
     return result
   }
   return obj
+}
+
+export function safeFormatDate(date: Date | string | null | undefined, formatStr = "dd/MM/yyyy"): string {
+  if (!date) return "-"
+
+  const dateObj = date instanceof Date ? date : new Date(date)
+
+  if (!isValid(dateObj)) return "-"
+
+  try {
+    return format(dateObj, formatStr)
+  } catch (error) {
+    console.error("Error formatting date:", error)
+    return "-"
+  }
 }

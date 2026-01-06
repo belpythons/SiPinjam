@@ -19,6 +19,27 @@ import { getRooms, getEquipment } from "@/lib/data-manager"
 import type { BookingFormData, Room, Equipment } from "@/lib/types"
 import { cn } from "@/lib/utils"
 
+const step1Schema = z.object({
+  type: z.enum(["room", "equipment"]),
+  itemId: z.string().min(1, "Pilih ruangan atau barang"),
+})
+
+const step2Schema = z.object({
+  startDate: z.date({
+    required_error: "Tanggal mulai wajib diisi",
+  }),
+  startTime: z.string().min(1, "Waktu mulai wajib diisi"),
+  endDate: z.date({
+    required_error: "Tanggal selesai wajib diisi",
+  }),
+  endTime: z.string().min(1, "Waktu selesai wajib diisi"),
+})
+
+const step3Schema = z.object({
+  purpose: z.string().min(10, "Tujuan minimal 10 karakter"),
+  notes: z.string().optional(),
+})
+
 const bookingSchema = z.object({
   type: z.enum(["room", "equipment"]),
   itemId: z.string().min(1, "Pilih ruangan atau barang"),
@@ -55,6 +76,7 @@ export function NewBookingModal({
 
   const form = useForm<z.infer<typeof bookingSchema>>({
     resolver: zodResolver(bookingSchema),
+    mode: "onSubmit",
     defaultValues: {
       type: preselectedType || "room",
       itemId: preselectedItemId || "",
@@ -110,17 +132,33 @@ export function NewBookingModal({
   }
 
   const nextStep = async () => {
-    let fieldsToValidate: Array<keyof z.infer<typeof bookingSchema>> = []
+    const values = form.getValues()
+    let isValid = false
 
-    if (step === 1) {
-      fieldsToValidate = ["type", "itemId"]
-    } else if (step === 2) {
-      fieldsToValidate = ["startDate", "startTime", "endDate", "endTime"]
-    }
+    try {
+      if (step === 1) {
+        step1Schema.parse({ type: values.type, itemId: values.itemId })
+        isValid = true
+      } else if (step === 2) {
+        step2Schema.parse({
+          startDate: values.startDate,
+          startTime: values.startTime,
+          endDate: values.endDate,
+          endTime: values.endTime,
+        })
+        isValid = true
+      }
 
-    const isValid = await form.trigger(fieldsToValidate)
-    if (isValid) {
-      setStep(step + 1)
+      if (isValid) {
+        setStep(step + 1)
+      }
+    } catch (error) {
+      // Trigger validation to show error messages
+      if (step === 1) {
+        await form.trigger(["type", "itemId"])
+      } else if (step === 2) {
+        await form.trigger(["startDate", "startTime", "endDate", "endTime"])
+      }
     }
   }
 
@@ -292,16 +330,14 @@ export function NewBookingModal({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Waktu Mulai</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="time"
-                            value={field.value}
-                            onChange={field.onChange}
-                            onBlur={field.onBlur}
-                            name={field.name}
-                            ref={field.ref}
-                          />
-                        </FormControl>
+                        <Input
+                          type="time"
+                          value={field.value}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={field.ref}
+                        />
                         <FormMessage />
                       </FormItem>
                     )}
@@ -356,16 +392,14 @@ export function NewBookingModal({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Waktu Selesai</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="time"
-                            value={field.value}
-                            onChange={field.onChange}
-                            onBlur={field.onBlur}
-                            name={field.name}
-                            ref={field.ref}
-                          />
-                        </FormControl>
+                        <Input
+                          type="time"
+                          value={field.value}
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={field.ref}
+                        />
                         <FormMessage />
                       </FormItem>
                     )}

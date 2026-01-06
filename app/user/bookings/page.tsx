@@ -1,9 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Calendar, Clock, TrendingUp } from "lucide-react"
+import { motion } from "framer-motion"
+import { Plus, Calendar, Clock, TrendingUp, Grid3x3, List } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { BookingCardGrid } from "@/components/user/booking-card-grid"
 import { BookingTable } from "@/components/user/booking-table"
 import { NewBookingModal } from "@/components/user/new-booking-modal"
 import { BookingDetailModal } from "@/components/user/booking-detail-modal"
@@ -11,12 +13,14 @@ import { generateBookingPDF } from "@/lib/pdf-generator"
 import { getRooms, getEquipment, getBookings, saveBookings } from "@/lib/data-manager"
 import { toast } from "sonner"
 import type { Booking, BookingFormData } from "@/lib/types"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [isNewBookingOpen, setIsNewBookingOpen] = useState(false)
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+  const [viewMode, setViewMode] = useState<"grid" | "table">("grid")
 
   useEffect(() => {
     const loadedBookings = getBookings()
@@ -36,7 +40,6 @@ export default function BookingsPage() {
     }
 
     const user = JSON.parse(authData)
-
     const items = data.type === "room" ? getRooms() : getEquipment()
     const item = items.find((i) => i.id === data.itemId)
 
@@ -48,7 +51,6 @@ export default function BookingsPage() {
     const startDate = data.startDate instanceof Date ? data.startDate : new Date(data.startDate)
     const endDate = data.endDate instanceof Date ? data.endDate : new Date(data.endDate)
 
-    // Validate dates
     if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
       toast.error("Tanggal tidak valid")
       return
@@ -106,61 +108,101 @@ export default function BookingsPage() {
   }
 
   return (
-    <div className="container py-10 px-6 space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 lg:space-y-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+      >
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">Riwayat Peminjaman</h1>
-          <p className="text-muted-foreground">Kelola dan lihat riwayat peminjaman Anda</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Riwayat Peminjaman</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Kelola dan lihat riwayat peminjaman Anda</p>
         </div>
-        <Button onClick={() => setIsNewBookingOpen(true)} size="lg" className="px-6">
+        <Button
+          onClick={() => setIsNewBookingOpen(true)}
+          size="lg"
+          className="w-full sm:w-auto px-6 shadow-lg hover:shadow-xl"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Peminjaman Baru
         </Button>
-      </div>
+      </motion.div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium">Total Peminjaman</CardTitle>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4"
+      >
+        <Card className="hover:shadow-lg transition-shadow border-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
+            <CardTitle className="text-xs sm:text-sm font-medium">Total Peminjaman</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold">{stats.total}</div>
+            <div className="text-xl sm:text-2xl font-bold">{stats.total}</div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium">Menunggu Persetujuan</CardTitle>
+        <Card className="hover:shadow-lg transition-shadow border-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
+            <CardTitle className="text-xs sm:text-sm font-medium">Menunggu</CardTitle>
             <Clock className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+            <div className="text-xl sm:text-2xl font-bold text-yellow-600">{stats.pending}</div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium">Disetujui/Aktif</CardTitle>
+        <Card className="hover:shadow-lg transition-shadow border-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
+            <CardTitle className="text-xs sm:text-sm font-medium">Disetujui</CardTitle>
             <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold text-green-600">{stats.approved}</div>
+            <div className="text-xl sm:text-2xl font-bold text-green-600">{stats.approved}</div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
-            <CardTitle className="text-sm font-medium">Selesai</CardTitle>
+        <Card className="hover:shadow-lg transition-shadow border-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
+            <CardTitle className="text-xs sm:text-sm font-medium">Selesai</CardTitle>
             <Calendar className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="text-2xl font-bold text-blue-600">{stats.completed}</div>
+            <div className="text-xl sm:text-2xl font-bold text-blue-600">{stats.completed}</div>
           </CardContent>
         </Card>
-      </div>
+      </motion.div>
 
-      <BookingTable bookings={bookings} onViewDetail={handleViewDetail} onDownloadPDF={handleDownloadPDF} />
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+        <Card className="border-2">
+          <CardHeader className="space-y-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <CardTitle className="text-lg sm:text-xl">Daftar Peminjaman</CardTitle>
+              <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as "grid" | "table")}>
+                <TabsList>
+                  <TabsTrigger value="grid" className="gap-2">
+                    <Grid3x3 className="h-4 w-4" />
+                    <span className="hidden sm:inline">Grid</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="table" className="gap-2">
+                    <List className="h-4 w-4" />
+                    <span className="hidden sm:inline">Tabel</span>
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {viewMode === "grid" ? (
+              <BookingCardGrid bookings={bookings} onViewDetail={handleViewDetail} onDownloadPDF={handleDownloadPDF} />
+            ) : (
+              <BookingTable bookings={bookings} onViewDetail={handleViewDetail} onDownloadPDF={handleDownloadPDF} />
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
 
       <NewBookingModal open={isNewBookingOpen} onOpenChange={setIsNewBookingOpen} onSubmit={handleNewBooking} />
 

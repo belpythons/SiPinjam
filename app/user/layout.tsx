@@ -9,6 +9,7 @@ import { UserAvatarDropdown } from "@/components/layouts/user-avatar-dropdown"
 import { Footer } from "@/components/layouts/footer"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import type { User } from "@/lib/types"
+import { useSidebarStore } from "@/lib/sidebar-store"
 
 export default function UserLayout({
   children,
@@ -18,6 +19,7 @@ export default function UserLayout({
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const { isCollapsed } = useSidebarStore()
 
   useEffect(() => {
     const authData = localStorage.getItem("sipinjam_auth")
@@ -57,7 +59,7 @@ export default function UserLayout({
       <div className="flex h-screen overflow-hidden">
         <UserSidebar />
 
-        <div className="flex flex-1 flex-col lg:ml-64">
+        <div className={`flex flex-1 flex-col transition-all duration-300 ${isCollapsed ? "lg:ml-20" : "lg:ml-64"}`}>
           {/* Header */}
           <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-4 lg:px-6">
             <div className="ml-12 lg:ml-0">
@@ -67,7 +69,7 @@ export default function UserLayout({
           </header>
 
           {/* Main content */}
-          <main className="flex-1 overflow-y-auto">{children}</main>
+          <main className="flex-1 overflow-y-auto bg-gray-50">{children}</main>
 
           <Footer />
         </div>

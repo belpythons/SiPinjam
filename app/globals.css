@@ -25,7 +25,6 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  /* Changed primary from black to blue for colorful buttons */
   --primary: oklch(0.555 0.227 263.38);
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.97 0 0);
@@ -36,7 +35,7 @@
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
+  --border: oklch(0.96 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
@@ -44,10 +43,9 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  /* Updated sidebar primary to match main primary blue */
   --sidebar-primary: oklch(0.555 0.227 263.38);
   --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.97 0 0);
@@ -140,17 +138,14 @@
   body {
     @apply bg-background text-foreground;
   }
-  /* Adding smooth transitions for theme changes */
   * {
-    transition-property: background-color, border-color, color, fill, stroke;
+    transition-property: background-color, border-color, color, fill, stroke, box-shadow, transform;
     transition-duration: 200ms;
-    transition-timing-function: ease-in-out;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
-  /* Adding scroll behavior */
   html {
     scroll-behavior: smooth;
   }
-  /* Custom scrollbar styling */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -167,19 +162,33 @@
   }
 }
 
-/* Adding animation utilities */
 @layer utilities {
   .animate-fade-in {
-    animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .animate-slide-up {
-    animation: slideUp 0.3s ease-in-out;
+    animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .animate-slide-down {
-    animation: slideDown 0.3s ease-in-out;
+    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .animate-scale-in {
+    animation: scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Adding admin color utilities for orange theme */
+  .bg-user-primary {
+    background-color: #3b82f6;
+  }
+  .bg-user-primary-dark {
+    background-color: #2563eb;
+  }
+  .hover\:bg-user-primary-dark:hover {
+    background-color: #2563eb;
+  }
+  .text-user-primary {
+    color: #3b82f6;
+  }
+
   .bg-admin-primary {
     background-color: #f97316;
   }
@@ -198,6 +207,18 @@
   .border-admin-primary {
     border-color: #f97316;
   }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
 }
 
 @keyframes fadeIn {
@@ -211,7 +232,7 @@
 
 @keyframes slideUp {
   from {
-    transform: translateY(10px);
+    transform: translateY(20px);
     opacity: 0;
   }
   to {
@@ -222,11 +243,22 @@
 
 @keyframes slideDown {
   from {
-    transform: translateY(-10px);
+    transform: translateY(-20px);
     opacity: 0;
   }
   to {
     transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
     opacity: 1;
   }
 }

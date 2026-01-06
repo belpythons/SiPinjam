@@ -113,21 +113,21 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="container py-10 px-6 space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight">Kelola User</h1>
-          <p className="text-muted-foreground">Manajemen user dan hak akses sistem</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Kelola User</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Manajemen user dan hak akses sistem</p>
         </div>
-        <Button onClick={handleAddNew} size="lg" className="px-6 bg-orange-600 hover:bg-orange-700">
+        <Button onClick={handleAddNew} size="lg" className="w-full sm:w-auto px-6 bg-orange-600 hover:bg-orange-700">
           <Plus className="mr-2 h-4 w-4" />
           Tambah User
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <Card className="border-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
             <CardTitle className="text-sm font-medium">Total User</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -135,8 +135,8 @@ export default function UsersPage() {
             <div className="text-2xl font-bold">{stats.total}</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <Card className="border-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
             <CardTitle className="text-sm font-medium">Aktif</CardTitle>
             <Users className="h-4 w-4 text-green-600" />
           </CardHeader>
@@ -144,8 +144,8 @@ export default function UsersPage() {
             <div className="text-2xl font-bold text-green-600">{stats.active}</div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-3">
+        <Card className="border-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
             <CardTitle className="text-sm font-medium">Nonaktif</CardTitle>
             <Users className="h-4 w-4 text-red-600" />
           </CardHeader>

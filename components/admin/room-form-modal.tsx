@@ -18,9 +18,9 @@ import type { Room } from "@/lib/types"
 
 const roomSchema = z.object({
   name: z.string().min(3, "Nama ruangan minimal 3 karakter"),
-  capacity: z.number().min(1, "Kapasitas minimal 1 orang"),
+  capacity: z.coerce.number().min(1, "Kapasitas minimal 1 orang"),
   building: z.string().min(1, "Gedung harus diisi"),
-  floor: z.number().min(1, "Lantai minimal 1"),
+  floor: z.coerce.number().min(1, "Lantai minimal 1").optional(),
   status: z.enum(["available", "booked", "in-use"]),
 })
 
@@ -56,6 +56,8 @@ export function RoomFormModal({ open, onClose, room, onSave }: RoomFormModalProp
           status: room.status,
         }
       : {
+          capacity: 1,
+          floor: 1,
           status: "available",
         },
   })
@@ -66,8 +68,11 @@ export function RoomFormModal({ open, onClose, room, onSave }: RoomFormModalProp
     if (room) {
       setFacilities(room.facilities)
       setImagePreview(room.imageUrl)
+    } else {
+      setFacilities([])
+      setImagePreview("")
     }
-  }, [room])
+  }, [room, open])
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -168,8 +173,8 @@ export function RoomFormModal({ open, onClose, room, onSave }: RoomFormModalProp
               {errors.building && <p className="text-sm text-red-500">{errors.building.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="floor">Lantai *</Label>
-              <Input id="floor" type="number" {...register("floor", { valueAsNumber: true })} placeholder="1" />
+              <Label htmlFor="floor">Lantai</Label>
+              <Input id="floor" type="number" {...register("floor")} placeholder="1" min="1" />
               {errors.floor && <p className="text-sm text-red-500">{errors.floor.message}</p>}
             </div>
           </div>
@@ -178,7 +183,7 @@ export function RoomFormModal({ open, onClose, room, onSave }: RoomFormModalProp
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="capacity">Kapasitas *</Label>
-              <Input id="capacity" type="number" {...register("capacity", { valueAsNumber: true })} placeholder="50" />
+              <Input id="capacity" type="number" {...register("capacity")} placeholder="50" min="1" />
               {errors.capacity && <p className="text-sm text-red-500">{errors.capacity.message}</p>}
             </div>
             <div className="space-y-2">

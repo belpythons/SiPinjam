@@ -19,8 +19,8 @@ import type { Equipment } from "@/lib/types"
 const equipmentSchema = z.object({
   name: z.string().min(3, "Nama barang minimal 3 karakter"),
   category: z.string().min(1, "Kategori harus diisi"),
-  quantity: z.number().min(1, "Jumlah minimal 1"),
-  available: z.number().min(0, "Ketersediaan tidak boleh negatif"),
+  quantity: z.coerce.number().min(1, "Jumlah minimal 1"),
+  available: z.coerce.number().min(0, "Ketersediaan tidak boleh negatif"),
   status: z.enum(["available", "booked", "maintenance"]),
   description: z.string().min(10, "Deskripsi minimal 10 karakter"),
 })
@@ -56,8 +56,12 @@ export function EquipmentFormModal({ open, onClose, equipment, onSave }: Equipme
           description: equipment.description,
         }
       : {
+          name: "",
+          category: "",
+          quantity: 1,
+          available: 1,
           status: "available",
-          available: 0,
+          description: "",
         },
   })
 
@@ -66,10 +70,30 @@ export function EquipmentFormModal({ open, onClose, equipment, onSave }: Equipme
   const available = watch("available")
 
   useEffect(() => {
-    if (equipment) {
-      setImagePreview(equipment.imageUrl)
+    if (open) {
+      if (equipment) {
+        reset({
+          name: equipment.name,
+          category: equipment.category,
+          quantity: equipment.quantity,
+          available: equipment.available,
+          status: equipment.status,
+          description: equipment.description,
+        })
+        setImagePreview(equipment.imageUrl)
+      } else {
+        reset({
+          name: "",
+          category: "",
+          quantity: 1,
+          available: 1,
+          status: "available",
+          description: "",
+        })
+        setImagePreview("")
+      }
     }
-  }, [equipment])
+  }, [open, equipment, reset])
 
   useEffect(() => {
     if (available > quantity) {
@@ -167,12 +191,24 @@ export function EquipmentFormModal({ open, onClose, equipment, onSave }: Equipme
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="quantity">Jumlah Total *</Label>
-              <Input id="quantity" type="number" {...register("quantity", { valueAsNumber: true })} placeholder="10" />
+              <Input
+                id="quantity"
+                type="number"
+                min="1"
+                {...register("quantity", { valueAsNumber: true })}
+                placeholder="10"
+              />
               {errors.quantity && <p className="text-sm text-red-500">{errors.quantity.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="available">Tersedia *</Label>
-              <Input id="available" type="number" {...register("available", { valueAsNumber: true })} placeholder="7" />
+              <Input
+                id="available"
+                type="number"
+                min="0"
+                {...register("available", { valueAsNumber: true })}
+                placeholder="7"
+              />
               {errors.available && <p className="text-sm text-red-500">{errors.available.message}</p>}
             </div>
             <div className="space-y-2">

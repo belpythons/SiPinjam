@@ -80,14 +80,14 @@ export default function RoomsPage() {
   }
 
   return (
-    <div className="container py-10 px-6 space-y-8">
+    <div className="container mx-auto py-6 sm:py-8 lg:py-10 px-4 sm:px-6 space-y-6 sm:space-y-8">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">Daftar Ruangan</h1>
-        <p className="text-muted-foreground">Pilih ruangan yang ingin Anda pinjam</p>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Daftar Ruangan</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Pilih ruangan yang ingin Anda pinjam</p>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -97,9 +97,9 @@ export default function RoomsPage() {
             className="pl-10"
           />
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-full sm:w-[150px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -110,7 +110,7 @@ export default function RoomsPage() {
             </SelectContent>
           </Select>
           <Select value={buildingFilter} onValueChange={setBuildingFilter}>
-            <SelectTrigger className="w-[150px]">
+            <SelectTrigger className="w-full sm:w-[150px]">
               <SelectValue placeholder="Gedung" />
             </SelectTrigger>
             <SelectContent>
@@ -127,7 +127,7 @@ export default function RoomsPage() {
       </div>
 
       {/* Results Count */}
-      <div className="text-sm text-muted-foreground">
+      <div className="text-sm text-muted-foreground px-1">
         Menampilkan {filteredRooms.length} dari {rooms.length} ruangan
       </div>
 
@@ -135,12 +135,14 @@ export default function RoomsPage() {
       {filteredRooms.length === 0 ? (
         <div className="flex min-h-[400px] items-center justify-center">
           <div className="text-center space-y-2">
-            <p className="text-lg font-semibold">Tidak ada ruangan ditemukan</p>
+            <p className="text-base sm:text-lg font-semibold">Tidak ada ruangan ditemukan</p>
             <p className="text-sm text-muted-foreground">Coba ubah filter pencarian Anda</p>
           </div>
         </div>
       ) : (
-        <div className={view === "grid" ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-3" : "space-y-4"}>
+        <div
+          className={view === "grid" ? "grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "space-y-4"}
+        >
           {filteredRooms.map((room) => (
             <RoomCard key={room.id} room={room} view={view} onBook={handleBook} />
           ))}
