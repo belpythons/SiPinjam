@@ -14,7 +14,7 @@ Any changes you make to your deployed app will be automatically pushed to this r
 
 Your project is live at:
 
-**[https://vercel.com/rius-projects-71c87303/v0-sipinjam-app-build]([https://vercel.com/rius-projects-71c87303/v0-sipinjam-app-build](https://si-pinjam.vercel.app/))**
+**([[https://vercel.com/rius-projects-71c87303/v0-sipinjam-app-build](https://si-pinjam.vercel.app/](https://si-pinjam.vercel.app/)))**
 
 
 ## Build your app
